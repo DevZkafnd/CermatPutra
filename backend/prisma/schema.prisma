@@ -1,0 +1,261 @@
+// Konfigurasi Prisma Client
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Konfigurasi Database
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum untuk role pengguna
+enum RolePengguna {
+  PELANGGAN
+  ADMIN
+  SUPER_ADMIN
+}
+
+// Enum untuk status pesanan
+enum StatusPesanan {
+  MENUNGGU_PEMBAYARAN
+  DIBAYAR
+  DIPROSES
+  DIKIRIM
+  SELESAI
+  DIBATALKAN
+}
+
+// Enum untuk tipe diskon voucher
+enum TipeDiskon {
+  PERSENTASE
+  NOMINAL
+}
+
+// Enum untuk status pembayaran
+enum StatusPembayaran {
+  PENDING
+  BERHASIL
+  GAGAL
+  EXPIRED
+}
+
+// Model Pengguna
+model Pengguna {
+  id            String   @id @default(uuid())
+  nama          String
+  email         String   @unique
+  kata_sandi    String   // Hash password
+  nomor_telepon String?
+  role          RolePengguna @default(PELANGGAN)
+  dibuat_pada   DateTime @default(now())
+  diperbarui_pada DateTime @updatedAt
+  
+  // Relasi
+  pesanan       Pesanan[]
+  keranjang     Keranjang[]
+  alamat        Alamat[]
+  ulasan        Ulasan[]
+  
+  @@map("pengguna")
+}
+
+// Model Kategori Produk
+model KategoriProduk {
+  id          String   @id @default(uuid())
+  nama        String
+  slug        String   @unique
+  deskripsi   String?
+  gambar_url  String?
+  dibuat_pada DateTime @default(now())
+  diperbarui_pada DateTime @updatedAt
+  
+  // Relasi
+  produk      Produk[]
+  
+  @@map("kategori_produk")
+}
+
+// Model Produk
+model Produk {
+  id               String   @id @default(uuid())
+  nama             String
+  slug             String   @unique
+  deskripsi        String?
+  harga            Decimal  @db.Decimal(12, 2)
+  berat_gram       Int      // Berat dalam gram untuk kalkulasi ongkir
+  stok             Int      @default(0)
+  gambar_url       String?
+  kategori_id      String
+  is_aktif         Boolean  @default(true)
+  dibuat_pada      DateTime @default(now())
+  diperbarui_pada  DateTime @updatedAt
+  
+  // Relasi
+  kategori         KategoriProduk @relation(fields: [kategori_id], references: [id])
+  item_keranjang   ItemKeranjang[]
+  item_pesanan     ItemPesanan[]
+  ulasan           Ulasan[]
+  
+  @@map("produk")
+}
+
+// Model Voucher
+model Voucher {
+  id                String   @id @default(uuid())
+  kode              String   @unique
+  tipe_diskon       TipeDiskon
+  nilai_diskon      Decimal  @db.Decimal(12, 2) // Persentase atau nominal
+  pembelian_minimum Decimal? @db.Decimal(12, 2)
+  maksimal_diskon   Decimal? @db.Decimal(12, 2) // Untuk tipe persentase
+  kuota             Int?     // Jumlah voucher tersedia
+  tanggal_mulai     DateTime
+  tanggal_berakhir  DateTime
+  is_aktif          Boolean  @default(true)
+  dibuat_pada       DateTime @default(now())
+  diperbarui_pada   DateTime @updatedAt
+  
+  // Relasi
+  pesanan           Pesanan[]
+  
+  @@map("voucher")
+}
+
+// Model Keranjang
+model Keranjang {
+  id              String   @id @default(uuid())
+  pengguna_id     String
+  dibuat_pada     DateTime @default(now())
+  diperbarui_pada DateTime @updatedAt
+  
+  // Relasi
+  pengguna        Pengguna @relation(fields: [pengguna_id], references: [id], onDelete: Cascade)
+  item            ItemKeranjang[]
+  
+  @@map("keranjang")
+}
+
+// Model Item Keranjang
+model ItemKeranjang {
+  id              String   @id @default(uuid())
+  keranjang_id    String
+  produk_id       String
+  jumlah          Int      @default(1)
+  dibuat_pada     DateTime @default(now())
+  diperbarui_pada DateTime @updatedAt
+  
+  // Relasi
+  keranjang       Keranjang @relation(fields: [keranjang_id], references: [id], onDelete: Cascade)
+  produk          Produk @relation(fields: [produk_id], references: [id])
+  
+  @@unique([keranjang_id, produk_id])
+  @@map("item_keranjang")
+}
+
+// Model Alamat Pengiriman
+model Alamat {
+  id              String   @id @default(uuid())
+  pengguna_id     String
+  label           String   // Contoh: "Rumah", "Kantor"
+  nama_penerima   String
+  nomor_telepon   String
+  alamat_lengkap  String
+  kota            String
+  provinsi        String
+  kode_pos        String
+  latitude        Decimal? @db.Decimal(10, 8)
+  longitude       Decimal? @db.Decimal(11, 8)
+  is_utama        Boolean  @default(false)
+  dibuat_pada     DateTime @default(now())
+  diperbarui_pada DateTime @updatedAt
+  
+  // Relasi
+  pengguna        Pengguna @relation(fields: [pengguna_id], references: [id], onDelete: Cascade)
+  pesanan         Pesanan[]
+  
+  @@map("alamat")
+}
+
+// Model Pesanan
+model Pesanan {
+  id                String   @id @default(uuid())
+  nomor_pesanan     String   @unique
+  pengguna_id       String
+  alamat_id         String
+  voucher_id        String?
+  total_produk      Decimal  @db.Decimal(12, 2)
+  diskon            Decimal  @default(0) @db.Decimal(12, 2)
+  ongkir            Decimal  @db.Decimal(12, 2)
+  jarak_km          Decimal? @db.Decimal(8, 2) // Jarak pengiriman dalam KM
+  total_pembayaran  Decimal  @db.Decimal(12, 2)
+  status            StatusPesanan @default(MENUNGGU_PEMBAYARAN)
+  catatan           String?
+  dibuat_pada       DateTime @default(now())
+  diperbarui_pada   DateTime @updatedAt
+  
+  // Relasi
+  pengguna          Pengguna @relation(fields: [pengguna_id], references: [id])
+  alamat            Alamat @relation(fields: [alamat_id], references: [id])
+  voucher           Voucher? @relation(fields: [voucher_id], references: [id])
+  item              ItemPesanan[]
+  pembayaran        Pembayaran?
+  
+  @@map("pesanan")
+}
+
+// Model Item Pesanan
+model ItemPesanan {
+  id              String   @id @default(uuid())
+  pesanan_id      String
+  produk_id       String
+  nama_produk     String   // Snapshot nama produk saat order
+  harga_satuan    Decimal  @db.Decimal(12, 2)
+  jumlah          Int
+  subtotal        Decimal  @db.Decimal(12, 2)
+  dibuat_pada     DateTime @default(now())
+  
+  // Relasi
+  pesanan         Pesanan @relation(fields: [pesanan_id], references: [id], onDelete: Cascade)
+  produk          Produk @relation(fields: [produk_id], references: [id])
+  
+  @@map("item_pesanan")
+}
+
+// Model Pembayaran
+model Pembayaran {
+  id                  String   @id @default(uuid())
+  pesanan_id          String   @unique
+  metode_pembayaran   String   // Contoh: "gopay", "bank_transfer", dll
+  jumlah              Decimal  @db.Decimal(12, 2)
+  status              StatusPembayaran @default(PENDING)
+  midtrans_order_id   String?  @unique
+  midtrans_token      String?
+  url_pembayaran      String?
+  tanggal_bayar       DateTime?
+  bukti_pembayaran    String?
+  dibuat_pada         DateTime @default(now())
+  diperbarui_pada     DateTime @updatedAt
+  
+  // Relasi
+  pesanan             Pesanan @relation(fields: [pesanan_id], references: [id], onDelete: Cascade)
+  
+  @@map("pembayaran")
+}
+
+// Model Ulasan Produk
+model Ulasan {
+  id              String   @id @default(uuid())
+  produk_id       String
+  pengguna_id     String
+  rating          Int      // 1-5
+  komentar        String?
+  dibuat_pada     DateTime @default(now())
+  diperbarui_pada DateTime @updatedAt
+  
+  // Relasi
+  produk          Produk @relation(fields: [produk_id], references: [id], onDelete: Cascade)
+  pengguna        Pengguna @relation(fields: [pengguna_id], references: [id], onDelete: Cascade)
+  
+  @@unique([produk_id, pengguna_id])
+  @@map("ulasan")
+}
