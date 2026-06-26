@@ -24,6 +24,8 @@ Script ini akan otomatis:
 - ✅ Otomatis install dependencies (npm packages) jika belum terinstall
 - ✅ Memberikan warning jika ada konfigurasi yang kurang
 
+📖 **Detail lengkap script checking:** Lihat [`README_SCRIPTS.md`](./README_SCRIPTS.md)
+
 #### **Untuk Windows:**
 
 ```powershell
