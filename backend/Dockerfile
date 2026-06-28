@@ -1,6 +1,9 @@
 # Gunakan Node.js 20 Alpine untuk ukuran image yang lebih kecil
 FROM node:20-alpine
 
+#install openssl
+RUN apk add --no-cache openssl libc6-compat
+
 # Set working directory
 WORKDIR /app
 
