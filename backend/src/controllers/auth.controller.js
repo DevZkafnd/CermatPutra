@@ -1,5 +1,5 @@
 // Controller untuk autentikasi pengguna
-const { registerPengguna, loginPengguna } = require('../services/auth.service');
+const { registerPengguna, loginPengguna, ambilProfilPengguna } = require('../services/auth.service');
 const { responseSuccess, responseError } = require('../utils/response.util');
 
 /**
@@ -52,7 +52,24 @@ const login = async (req, res) => {
   }
 };
 
+/**
+ * Ambil profil pengguna yang sedang login
+ * GET /api/v1/auth/profile
+ */
+const getProfile = async (req, res) => {
+  try {
+    const idPengguna = req.pengguna.id;
+
+    const dataPengguna = await ambilProfilPengguna(idPengguna);
+
+    return responseSuccess(res, dataPengguna, 'Berhasil mendapatkan profil', 200);
+  } catch (error) {
+    return responseError(res, error.message, 400);
+  }
+};
+
 module.exports = {
   register,
   login,
+  getProfile,
 };

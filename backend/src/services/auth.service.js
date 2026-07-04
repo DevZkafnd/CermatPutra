@@ -81,7 +81,29 @@ const loginPengguna = async ({ email, kataSandi }) => {
   };
 };
 
+/**
+ * Ambil profil pengguna berdasarkan ID
+ * @param {string} idPengguna - ID pengguna
+ * @returns {Object} Data pengguna tanpa kata_sandi
+ */
+const ambilProfilPengguna = async (idPengguna) => {
+  // Cari pengguna berdasarkan ID
+  const penggunaAda = await prisma.pengguna.findUnique({
+    where: { id: idPengguna },
+  });
+
+  if (!penggunaAda) {
+    throw new Error('Pengguna tidak ditemukan');
+  }
+
+  // Hapus kata_sandi dari objek sebelum dikembalikan
+  const { kata_sandi, ...dataPenggunaBersih } = penggunaAda;
+
+  return dataPenggunaBersih;
+};
+
 module.exports = {
   registerPengguna,
   loginPengguna,
+  ambilProfilPengguna,
 };

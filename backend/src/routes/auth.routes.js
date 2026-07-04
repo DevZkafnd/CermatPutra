@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { register, login } = require('../controllers/auth.controller');
+const { register, login, getProfile } = require('../controllers/auth.controller');
+const { verifikasiToken } = require('../middlewares/auth.middleware');
 
 /**
  * @swagger
@@ -137,5 +138,50 @@ router.post('/register', register);
  *               message: Email atau kata sandi salah
  */
 router.post('/login', login);
+
+/**
+ * @swagger
+ * /auth/profile:
+ *   get:
+ *     summary: Ambil profil pengguna yang sedang login
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Berhasil mendapatkan profil
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Berhasil mendapatkan profil
+ *                 data:
+ *                   $ref: '#/components/schemas/Pengguna'
+ *       401:
+ *         description: Token tidak ditemukan atau tidak valid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ResponseError'
+ *             example:
+ *               status: error
+ *               message: Token tidak valid
+ *       400:
+ *         description: Pengguna tidak ditemukan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ResponseError'
+ *             example:
+ *               status: error
+ *               message: Pengguna tidak ditemukan
+ */
+router.get('/profile', verifikasiToken, getProfile);
 
 module.exports = router;
