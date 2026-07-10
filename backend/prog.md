@@ -68,11 +68,12 @@ Mengurus katalog barang yang bakal ditampilkan di frontend.
 Menampung aktivitas belanja pelanggan sebelum masuk ke fase checkout.
 
 - [ ] **Fitur Lihat Keranjang (`GET /api/v1/keranjang`):**
-    - [ ] Menghitung total harga otomatis dari seluruh item di keranjang pengguna.
+    - [x] Menghitung total harga otomatis dari seluruh item di keranjang pengguna.
 - [ ] **Fitur Tambah ke Keranjang (`POST /api/v1/keranjang`):**
-    - [ ] Validasi ketersediaan stok produk sebelum dimasukkan ke item keranjang.
+    - [x] Validasi ketersediaan stok produk sebelum dimasukkan ke item keranjang.
 - [ ] **Fitur Hapus/Update Item Keranjang (`DELETE /PUT /api/v1/keranjang/:itemId`):**
-    - [ ] Modifikasi kuantitas atau menghapus item secara permanen.
+    - [x] Modifikasi kuantitas atau menghapus item secara permanen.
+**STATUS: KERANJANG BELANJA SELESAI 100%**
 
 ---
 

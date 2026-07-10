@@ -59,11 +59,13 @@ app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(spesifikasiSwagger, {
 // Import routes (akan dibuat nanti)
  const authRoutes = require('./routes/auth.routes');
 const produkRoutes = require('./routes/produk.routes');
+const keranjangRoutes = require('./routes/keranjang.routes');
 // const pesananRoutes = require('./routes/pesanan.routes');
 
 // Mount routes
  app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/produk', produkRoutes);
+app.use('/api/v1/keranjang', keranjangRoutes);
 // app.use('/api/v1/pesanan', pesananRoutes);
 
 // ============================================

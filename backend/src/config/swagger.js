@@ -61,6 +61,7 @@ const opsiSwagger = {
       { name: 'Health', description: 'Status server' },
       { name: 'Auth', description: 'Autentikasi pengguna' },
       { name: 'Produk', description: 'Manajemen katalog produk' },
+      { name: 'Keranjang', description: 'API untuk manajemen keranjang belanja pengguna' },
     ],
   },
   apis: ['./src/routes/*.js'],
