@@ -67,11 +67,11 @@ Mengurus katalog barang yang bakal ditampilkan di frontend.
 ### phase 3: Keranjang Belanja (Shopping Cart)
 Menampung aktivitas belanja pelanggan sebelum masuk ke fase checkout.
 
-- [ ] **Fitur Lihat Keranjang (`GET /api/v1/keranjang`):**
+- [x] **Fitur Lihat Keranjang (`GET /api/v1/keranjang`):**
     - [x] Menghitung total harga otomatis dari seluruh item di keranjang pengguna.
-- [ ] **Fitur Tambah ke Keranjang (`POST /api/v1/keranjang`):**
+- [x] **Fitur Tambah ke Keranjang (`POST /api/v1/keranjang`):**
     - [x] Validasi ketersediaan stok produk sebelum dimasukkan ke item keranjang.
-- [ ] **Fitur Hapus/Update Item Keranjang (`DELETE /PUT /api/v1/keranjang/:itemId`):**
+- [x] **Fitur Hapus/Update Item Keranjang (`DELETE /PUT /api/v1/keranjang/:itemId`):**
     - [x] Modifikasi kuantitas atau menghapus item secara permanen.
 **STATUS: KERANJANG BELANJA SELESAI 100%**
 
