@@ -39,16 +39,28 @@ Fase ini krusial karena token JWT yang dihasilkan di sini bakal dipakai hampir d
 Mengurus katalog barang yang bakal ditampilkan di frontend.
 
 - [ ] **Fitur Get All Products (`GET /api/v1/produk`): *(ON GOING - NEXT STEP)***
-    - [ ] Support filter berdasarkan kategori (slug).
-    - [ ] Support search query berdasarkan nama produk.
-    - [ ] Support pagination data (halaman, batas item).
+    - [x] *Service:* `getAllProduk` (Support filter slug kategori, search query nama, dan pagination).
+    - [x] *Controller:* Handler request get all produk dan memanggil service.
+    - [x] *Routes:* Endpoint `GET /api/v1/produk`.
 - [ ] **Fitur Get Product Detail (`GET /api/v1/produk/:id`):**
-    - [ ] Menampilkan spesifikasi lengkap, stok, beserta array ulasan produk.
+    - [x] *Service:* `getProdukById` (Menampilkan spesifikasi lengkap, stok, beserta array ulasan).
+    - [x] *Controller:* Handler request get detail produk berdasarkan ID param.
+    - [x] *Routes:* Endpoint `GET /api/v1/produk/:id`.
 - [ ] **Fitur CRUD Produk (Admin Only - Protected):**
-    - [ ] Tambah produk baru (`POST /api/v1/produk`).
-    - [ ] Update data produk (`PUT /api/v1/produk/:id`).
-    - [ ] Hapus produk (`DELETE /api/v1/produk/:id`).
-    - [ ] Integrasi upload gambar produk via middleware (Multer/Cloudinary).
+    - [ ] **Fitur Tambah Produk Baru (`POST /api/v1/produk`):**
+        - [x] *Service:* `tambahProduk` (Menyimpan data produk baru dengan slug dinamis).
+        - [x] *Controller:* Handler request create produk khusus Admin.
+        - [x] *Routes:* Endpoint `POST /api/v1/produk` dengan middleware `verifikasiToken` dan `periksaRole`.
+    - [ ] **Fitur Update Data Produk (`PUT /api/v1/produk/:id`):**
+        - [x] *Service:* `updateProduk` (Memperbarui data produk, mengecek eksistensi ID, dan validasi kategori).
+        - [x] *Controller:* Handler request update produk khusus Admin.
+        - [x] *Routes:* Endpoint `PUT /api/v1/produk/:id` dengan middleware `verifikasiToken` dan `periksaRole`.
+    - [ ] **Fitur Hapus Produk (`DELETE /api/v1/produk/:id`):**
+        - [x] *Service:* `hapusProduk` (Menghapus data produk berdasarkan ID).
+        - [x] *Controller:* Handler request delete produk khusus Admin.
+        - [x] *Routes:* Endpoint `DELETE /api/v1/produk/:id` dengan middleware `verifikasiToken` dan `periksaRole`.
+    - [x] Integrasi upload gambar produk via middleware (Multer/Cloudinary).
+    **STATUS: CRUD PRODUK SELESAI 100%**
 
 ---
 

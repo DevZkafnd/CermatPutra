@@ -60,6 +60,7 @@ const opsiSwagger = {
     tags: [
       { name: 'Health', description: 'Status server' },
       { name: 'Auth', description: 'Autentikasi pengguna' },
+      { name: 'Produk', description: 'Manajemen katalog produk' },
     ],
   },
   apis: ['./src/routes/*.js'],
