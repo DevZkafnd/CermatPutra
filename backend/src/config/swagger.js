@@ -62,6 +62,8 @@ const opsiSwagger = {
       { name: 'Auth', description: 'Autentikasi pengguna' },
       { name: 'Produk', description: 'Manajemen katalog produk' },
       { name: 'Keranjang', description: 'API untuk manajemen keranjang belanja pengguna' },
+      { name: 'Alamat & Ongkir', description: 'Manajemen alamat pengguna, validasi jarak COD, dan integrasi ongkos kirim Biteship' },
+      { name: 'Pesanan', description: 'Checkout, manajemen pesanan, dan integrasi pembayaran Midtrans' },
     ],
   },
   apis: ['./src/routes/*.js'],
