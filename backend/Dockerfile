@@ -1,6 +1,9 @@
 # Gunakan Node.js 20 Alpine untuk ukuran image yang lebih kecil
 FROM node:20-alpine
 
+#install openssl
+RUN apk add --no-cache openssl libc6-compat
+
 # Set working directory
 WORKDIR /app
 
@@ -8,7 +11,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy prisma schema
 COPY prisma ./prisma/

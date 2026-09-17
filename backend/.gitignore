@@ -20,3 +20,6 @@ Thumbs.db
 
 # Prisma
 prisma/migrations/
+
+# Dev tracking
+prog.md
