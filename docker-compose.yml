@@ -50,10 +50,12 @@ services:
       - /app/node_modules
 
   # Service Frontend (Next.js)
+  # Service Frontend (Next.js)
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      # Arahkan ke Dockerfile khusus development
+      dockerfile: Dockerfile.dev 
     container_name: ecommerce_frontend
     restart: unless-stopped
     ports:
@@ -65,9 +67,9 @@ services:
     networks:
       - ecommerce_network
     volumes:
+      # Standar binding volume untuk Hot Reload
       - ./frontend:/app
       - /app/node_modules
-      - /app/.next
 
 networks:
   ecommerce_network:

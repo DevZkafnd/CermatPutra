@@ -3,9 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
+  --foreground-rgb: 15, 23, 42;
+  --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 255, 255, 255;
+  /* Navbar heights for sticky calculations */
+  --navbar-height-sm: 64px;
+  --navbar-height-md: 80px;
+  --sticky-offset-sm: 80px;
+  --sticky-offset-md: 112px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,10 +23,164 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: rgb(var(--background-start-rgb));
 }
+
+::selection {
+  background: rgba(220, 38, 38, 0.16);
+  color: rgb(15, 23, 42);
+}
+
+/* ========================================
+   LEAFLET Z-INDEX MANAGEMENT
+   Ensures Leaflet components stay below navbar and modals
+   ======================================== */
+
+/* Reset Leaflet container to prevent z-index escalation */
+.leaflet-container {
+  z-index: 0 !important;
+  position: relative;
+  /* Create new stacking context without high z-index */
+  isolation: isolate;
+}
+
+/* All Leaflet panes inherit z-index: auto */
+.leaflet-pane {
+  z-index: auto !important;
+  position: absolute;
+}
+
+.leaflet-map-pane {
+  z-index: auto !important;
+}
+
+.leaflet-tile-pane {
+  z-index: auto !important;
+  z-index: 2 !important;
+}
+
+.leaflet-overlay-pane {
+  z-index: auto !important;
+  z-index: 7 !important;
+}
+
+.leaflet-shadow-pane {
+  z-index: auto !important;
+  z-index: 5 !important;
+}
+
+.leaflet-marker-pane {
+  z-index: auto !important;
+  z-index: 6 !important;
+}
+
+.leaflet-tooltip-pane {
+  z-index: auto !important;
+  z-index: 650 !important;
+}
+
+/* Leaflet popups - MUST stay low */
+.leaflet-popup-pane {
+  z-index: auto !important;
+  z-index: 8 !important;
+}
+
+.leaflet-popup {
+  z-index: 8 !important;
+}
+
+/* Leaflet controls - keep low */
+.leaflet-control-container {
+  z-index: 10 !important;
+  pointer-events: none;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 10 !important;
+}
+
+.leaflet-top .leaflet-control,
+.leaflet-bottom .leaflet-control {
+  z-index: 10 !important;
+  pointer-events: auto;
+}
+
+/* Zoom controls stay visible but below navbar */
+.leaflet-control-zoom {
+  z-index: 10 !important;
+}
+
+/* Prevent Leaflet attribution from appearing above anything */
+.leaflet-control-attribution {
+  z-index: 9 !important;
+}
+
+/* Constrain Leaflet children within container */
+.leaflet-container * {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   MAP COMPONENT POSITIONING
+   Ensures map wrapper creates proper stacking context
+   ======================================== */
+
+.map-wrapper {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}
+
+.map-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  isolation: isolate;
+}
+
+/* ========================================
+   STICKY POSITIONING FIXES
+   Ensures sticky elements work properly
+   ======================================== */
+
+/* Order summary sticky positioning */
+.order-summary-sticky {
+  position: sticky;
+  z-index: 30;
+  /* Prevents sticky from affecting other stacking contexts */
+  will-change: transform;
+}
+
+@media (max-width: 1024px) {
+  .order-summary-sticky {
+    top: 80px;
+    z-index: 20;
+  }
+}
+
+@media (min-width: 1024px) {
+  .order-summary-sticky {
+    top: 112px;
+    z-index: 30;
+  }
+}
+
+/* Ensure parent doesn't break sticky */
+.checkout-grid-parent {
+  /* Don't constrain sticky */
+  overflow: visible !important;
+  transform: none !important;
+}
+
+/* ========================================
+   NAVBAR LAYER - MUST BE ON TOP
+   ======================================== */
+
+header.sticky {
+  z-index: 50 !important;
+  position: sticky;
+  top: 0;
+}
+
+
