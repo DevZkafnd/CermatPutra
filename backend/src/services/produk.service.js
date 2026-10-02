@@ -2,9 +2,67 @@
 const prisma = require('../config/database');
 
 /**
- * Ambil semua produk dengan filter, pencarian, dan pagination
+ * Kamus sinonim dan singkatan untuk pencarian produk yang lebih cerdas.
+ * Kunci adalah istilah umum pengguna, nilai adalah singkatan/kode yang ada di database.
+ */
+const kamusSinonim = {
+  'mesin cuci': 'mc',
+  'kipas angin': 'kips',
+  'kulkas': 'ref',
+  'lemari es': 'ref',
+  'kompor': 'kmp',
+  'pendingin ruangan': 'ac',
+  'air conditioner': 'ac',
+  'televisi': 'tv',
+  'dispenser': 'disp',
+  'pemanas air': 'water heater',
+  'setrika': 'strika',
+  'blender': 'blndr',
+  'rice cooker': 'rc',
+  'magic com': 'rc',
+  'vacuum cleaner': 'vc',
+  'penyedot debu': 'vc',
+};
+
+/**
+ * Bangun kondisi OR untuk pencarian multi-kolom dengan dukungan sinonim.
+ * @param {string} kueri - Kata kunci pencarian dari pengguna
+ * @returns {Array} Array kondisi OR untuk Prisma
+ */
+const bangunKondisiPencarian = (kueri) => {
+  const kueriNormal = kueri.toLowerCase().trim();
+  const kataCarian = [kueriNormal];
+
+  // Cek apakah ada sinonim/singkatan yang terpetakan
+  const sinonim = kamusSinonim[kueriNormal];
+  if (sinonim) {
+    kataCarian.push(sinonim);
+  }
+  // Bangun kondisi OR: setiap kata dicari di kolom nama DAN deskripsi
+/*  
+  const kondisiOR = [];
+  for (const kata of kataCarian) {
+    kondisiOR.push({ nama: { contains: kata, mode: 'insensitive' } });
+    kondisiOR.push({ deskripsi: { contains: kata, mode: 'insensitive' } });
+  }
+
+  return kondisiOR;
+};
+*/
+
+const listKondisi = [];
+  for (const kata of kataCarian) {
+    listKondisi.push({ nama: { contains: kata, mode: 'insensitive' } });
+    listKondisi.push({ deskripsi: { contains: kata, mode: 'insensitive' } });
+  }
+
+  return listKondisi;
+};
+
+/**
+ * Ambil semua produk dengan filter, pencarian multi-kolom dengan sinonim, dan pagination
  * @param {Object} opsiQuery - Opsi query dan pagination
- * @param {string} [opsiQuery.kueri] - Kata kunci pencarian berdasarkan nama produk
+ * @param {string} [opsiQuery.kueri] - Kata kunci pencarian (mendukung nama, deskripsi, dan sinonim)
  * @param {string} [opsiQuery.kategori] - Slug kategori untuk filter produk
  * @param {number} [opsiQuery.halaman=1] - Nomor halaman (default: 1)
  * @param {number} [opsiQuery.batas=10] - Jumlah item per halaman (default: 10)
@@ -24,10 +82,8 @@ const getAllProduk = async ({ kueri, kategori, halaman = 1, batas = 10 } = {}) =
   const kondisiPencarian = {};
 
   if (kueri) {
-    kondisiPencarian.nama = {
-      contains: kueri,
-      mode: 'insensitive',
-    };
+    // Multi-kolom search dengan sinonim menggunakan OR
+    kondisiPencarian.OR = bangunKondisiPencarian(kueri);
   }
 
   if (kategori) {

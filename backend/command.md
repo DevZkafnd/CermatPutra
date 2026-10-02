@@ -4,6 +4,8 @@
 Buka GUI database via browser (localhost:5555):
 docker exec -it ecommerce_backend npx prisma studio --hostname 0.0.0.0
 
+http://localhost:${PORT}/api/v1/docs
+
 **Docker Operations**
 Hancurkan container lama:
 docker-compose down

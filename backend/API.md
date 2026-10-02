@@ -6,6 +6,11 @@
 http://localhost:3001/api/v1
 ```
 
+> **Database Management (Prisma Studio)**
+> To open Prisma Studio and view the database GUI in your browser (`http://localhost:5555`), run this command inside the container:
+> 
+> `docker exec -it ecommerce_backend npx prisma studio --hostname 0.0.0.0`
+
 ## Authentication
 
 All protected endpoints require a **JWT Bearer Token** in the `Authorization` header:

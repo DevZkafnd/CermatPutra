@@ -24,6 +24,7 @@ docker-compose.override.yml
 # Database
 *.db
 *.sqlite
+*.xlsx
 
 # OS
 .DS_Store
